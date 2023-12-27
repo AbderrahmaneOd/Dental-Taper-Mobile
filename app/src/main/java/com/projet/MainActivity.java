@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("OpenCV", "OpenCV loaded Successfully!");
         }
     }
+
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private ImageView imageView;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private Button studentPWListBtn;
     private Button pwListBtn;
     private Button submitResultsBtn;
-    private Button nextBtn, cameraBtn, reset;
+    private Button nextBtn, cameraBtn, resetBtn;
     private TextView stepTxtView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         pwListBtn = findViewById(R.id.AllPWBtn);
         submitResultsBtn = findViewById(R.id.submitResultBtn);
         nextBtn = findViewById(R.id.idNextBtn);
-        reset = findViewById(R.id.idResetBtn);
+        resetBtn = findViewById(R.id.idResetBtn);
         stepTxtView = findViewById(R.id.idStepTxtView);
         cameraBtn = findViewById(R.id.idCameraBtn);
 
@@ -114,14 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         });
-
-        reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedPoints.clear();
-            }
-        });
-
 
 
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -179,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String resultText = String.format(
-                                "Taper gauche: %.2f degrés\n" +
+                        "Taper gauche: %.2f degrés\n" +
                                 "Taper droite: %.2f degrés\n",
-                         (90 - taperAngleDeg) , (90 - taperAngleDeg2));
+                        (90 - taperAngleDeg), (90 - taperAngleDeg2));
                 anglesTextView.setText(resultText);
             }
         });
@@ -202,14 +195,13 @@ public class MainActivity extends AppCompatActivity {
         double angle2Deg = Math.toDegrees(angle2Rad);
 
 
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 String resultText = String.format(
                         "Taper gauche: %.2f degrés\n" +
                                 "Taper droite: %.2f degrés\n",
-                        (angle1Deg) , (angle2Deg));
+                        (angle1Deg), (angle2Deg));
                 anglesTextView.setText(resultText);
             }
         });
@@ -232,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     private void drawLinesBetweenPoints(List<org.opencv.core.Point> points, Mat image) {
         // Vérifier s'il y a exactement quatre points
 
-        if (points.size() == 4 ){
+        if (points.size() == 4) {
 
             Point intersection = findIntersection(points.get(0), points.get(1), points.get(2), points.get(3));
 
@@ -245,14 +237,14 @@ public class MainActivity extends AppCompatActivity {
 
             // Dessiner une ligne verticale bleue passant par le point d'indice 0
             org.opencv.core.Point point0 = points.get(0);
-           // Imgproc.line(image, new org.opencv.core.Point(point0.x, 0), new org.opencv.core.Point(point0.x, image.rows()), new Scalar(255, 0, 0), 2);
+            // Imgproc.line(image, new org.opencv.core.Point(point0.x, 0), new org.opencv.core.Point(point0.x, image.rows()), new Scalar(255, 0, 0), 2);
 
             // Dessiner une ligne verticale bleue passant par le point d'indice 2
             org.opencv.core.Point point2 = points.get(2);
             //Imgproc.line(image, new org.opencv.core.Point(point2.x, 0), new org.opencv.core.Point(point2.x, image.rows()), new Scalar(244, 0, 0), 2);
 
             updateImageView();
-        }else{
+        } else {
             // Gérer l'erreur si le nombre de points est incorrect
             Log.e("Point Selection", "Veuillez sélectionner exactement quatre points");
             return;
@@ -431,102 +423,159 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-            selectedBitmap = bitmap;
-            imageView.setImageBitmap(bitmap);
-
-            imageMat = new Mat();
-            Utils.bitmapToMat(bitmap, imageMat);
-
-            Imgproc.cvtColor(imageMat, imageMat, Imgproc.COLOR_BGR2GRAY);
-
-            Imgproc.GaussianBlur(imageMat, imageMat, new Size(5, 5), 0);
-
-            Imgproc.Canny(imageMat, imageMat, 50, 150);
-
-            Mat dilatedImage = new Mat();
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-            Imgproc.dilate(imageMat, dilatedImage, kernel);
-
-            Mat lines = new Mat();
-            Imgproc.HoughLinesP(dilatedImage, lines, 1, Math.PI / 180, 50, 50, 10);
-
-            Mat contoursImage = new Mat(imageMat.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
-            Imgproc.cvtColor(imageMat, contoursImage, Imgproc.COLOR_GRAY2BGR);
-            Imgproc.drawContours(contoursImage, getContours(lines), -1, new Scalar(0, 0, 255), 2);
-
-            // Appel de la fonction pour extraire les points du contour
-            extractContourPoints(imageMat);
-
-            Bitmap contoursBitmap = Bitmap.createBitmap(contoursImage.cols(), contoursImage.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(contoursImage, contoursBitmap);
-
-            imageView.setImageBitmap(contoursBitmap);
+        // Passer a l'etape 2
+        stepTxtView.setText("Étape 2. Versants internes (G-D)");
 
 
-            double leftTaperAngle = calculateTaperAngle(lines, true);
-            double rightTaperAngle = calculateTaperAngle(lines, false);
+        selectedBitmap = bitmap;
+        imageView.setImageBitmap(bitmap);
 
-            //drawArbitraryLines(imageMat);
+        imageMat = new Mat();
+        Utils.bitmapToMat(bitmap, imageMat);
 
-            Mat imagMatCopy = imageMat.clone();
+        Imgproc.cvtColor(imageMat, imageMat, Imgproc.COLOR_BGR2GRAY);
 
-            //Log.d("Debug", "Reference de imageMat à l'extérieur : " + System.identityHashCode(imageMat));
+        Imgproc.GaussianBlur(imageMat, imageMat, new Size(5, 5), 0);
 
-            // Set the onTouchListener for selecting points on the image
-            imageView.setOnTouchListener(new View.OnTouchListener() {
-                final int[] etapeActuelle = {1};
+        Imgproc.Canny(imageMat, imageMat, 50, 150);
 
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        float x = event.getX();
-                        float y = event.getY();
+        Mat dilatedImage = new Mat();
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+        Imgproc.dilate(imageMat, dilatedImage, kernel);
 
-                        // Selectioner une point avec le tracage
-                        //org.opencv.core.Point selectedPoint = convertToOpenCVPoint(x, y, imageMat.cols(), imageMat.rows());
-                        org.opencv.core.Point selectedPoint = findNearestContourPoint(x, y);
-                        selectedPoints.add(selectedPoint);
-                        drawPoint(imageMat, selectedPoint);
+        Mat lines = new Mat();
+        Imgproc.HoughLinesP(dilatedImage, lines, 1, Math.PI / 180, 50, 50, 10);
+
+        Mat contoursImage = new Mat(imageMat.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
+        Imgproc.cvtColor(imageMat, contoursImage, Imgproc.COLOR_GRAY2BGR);
+        Imgproc.drawContours(contoursImage, getContours(lines), -1, new Scalar(0, 0, 255), 2);
+
+        // Appel de la fonction pour extraire les points du contour
+        extractContourPoints(imageMat);
+
+        Bitmap contoursBitmap = Bitmap.createBitmap(contoursImage.cols(), contoursImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(contoursImage, contoursBitmap);
+
+        imageView.setImageBitmap(contoursBitmap);
 
 
-                        if (selectedPoints.size() == 5) {
+        double leftTaperAngle = calculateTaperAngle(lines, true);
+        double rightTaperAngle = calculateTaperAngle(lines, false);
+
+
+        Mat imagMatCopy = imageMat.clone();
+
+        //Log.d("Debug", "Reference de imageMat à l'extérieur : " + System.identityHashCode(imageMat));
+
+        final int[] totalPointsSelected = {0};
+        final int[]  currentStep = {2};
+
+        // Set the onTouchListener for selecting points on the image
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = event.getX();
+                    float y = event.getY();
+
+
+                    org.opencv.core.Point selectedPoint = findNearestContourPoint(x, y);
+                    selectedPoints.add(selectedPoint);
+                    drawPoint(imageMat, selectedPoint);
+
+                    totalPointsSelected[0]++;
+
+                    if (currentStep[0] == 2 && totalPointsSelected[0] <= 5) {
+
+                        if(totalPointsSelected[0] == 5){
                             // Effacer les lignes et les points
                             imageMat = imagMatCopy.clone(); // Réinitialiser l'image à son état d'origine
                             imageView.setImageBitmap(null); // Effacer l'image affichée dans l'imageView
                             selectedPoints.clear(); // Vider la liste des points sélectionnés
-                        } else if (selectedPoints.size() == 4) {
+                            stepTxtView.setText("Étape 3. Versants externes (G-D)");
 
-                            // Calculate angles and convergence using the four selected points
-                            //calculateAnglesVertical(selectedPoints);
+                            currentStep[0] = 3;
+
+                        } else if(totalPointsSelected[0] == 4){
                             calculateAnglesHorizontal(selectedPoints);
-
-                            // Dessiner les lignes entre les points sélectionnés
                             drawLinesBetweenPoints(selectedPoints, imageMat);
                         }
+
+
+                    } else if (currentStep[0] == 3 && totalPointsSelected[0] <= 10) {
+
+                        if(totalPointsSelected[0] == 10){
+                            // Effacer les lignes et les points
+                            imageMat = imagMatCopy.clone(); // Réinitialiser l'image à son état d'origine
+                            imageView.setImageBitmap(null); // Effacer l'image affichée dans l'imageView
+                            selectedPoints.clear(); // Vider la liste des points sélectionnés
+                            stepTxtView.setText("Étape 4. Angles de dépouille (G-D)");
+
+                            currentStep[0] = 4;
+
+                        } else if(totalPointsSelected[0] == 9){
+                            calculateAnglesVertical(selectedPoints);
+                            drawLinesBetweenPoints(selectedPoints, imageMat);
+
+
+                        }
+                    } else if (currentStep[0] == 4 && totalPointsSelected[0] <= 15) {
+
+                        if(totalPointsSelected[0] == 15){
+                            // Effacer les lignes et les points
+                            imageMat = imagMatCopy.clone(); // Réinitialiser l'image à son état d'origine
+                            imageView.setImageBitmap(null); // Effacer l'image affichée dans l'imageView
+                            selectedPoints.clear(); // Vider la liste des points sélectionnés
+
+                            resetBtn.setVisibility(View.VISIBLE);
+                            totalPointsSelected[0] = 0;
+                            currentStep[0] = 2;
+
+                        } else if(totalPointsSelected[0] == 14){
+                            calculateAnglesVertical(selectedPoints);
+                            drawLinesBetweenPoints(selectedPoints, imageMat);
+
+
+                        }
                     }
-                    return true;
+
+                    resetBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            totalPointsSelected[0] = 0;
+                            currentStep[0] = 2;
+
+                            stepTxtView.setText("Étape 2. Versants internes (G-D)");
+                        }
+                    });
+
+
+
                 }
-            });
+                return true;
+            }
+        });
 
 
-            // Afficher l'image avec les lignes après toutes les transformations
-            imageView.post(new Runnable() {
-                @Override
-                public void run() {
+        // Afficher l'image avec les lignes après toutes les transformations
+        imageView.post(new Runnable() {
+            @Override
+            public void run() {
 
-                    Log.d("Debug", "Reference de imageMat à post : " + System.identityHashCode(imageMat));
+                Log.d("Debug", "Reference de imageMat à post : " + System.identityHashCode(imageMat));
 
 
-                    // Convertir l'image avec les lignes en bitmap
-                    Bitmap finalBitmap = Bitmap.createBitmap(imageMat.cols(), imageMat.rows(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(imageMat, finalBitmap);
+                // Convertir l'image avec les lignes en bitmap
+                Bitmap finalBitmap = Bitmap.createBitmap(imageMat.cols(), imageMat.rows(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(imageMat, finalBitmap);
 
-                    // Afficher le bitmap dans l'imageView
-                    imageView.setImageBitmap(finalBitmap);
-                }
-            });
-        }
+                // Afficher le bitmap dans l'imageView
+                imageView.setImageBitmap(finalBitmap);
+            }
+        });
+    }
 
 
 
@@ -572,7 +621,7 @@ public class MainActivity extends AppCompatActivity {
         return nearestPoint;
     }
 
-    public void updateImageView(){
+    public void updateImageView() {
 
         // Afficher l'image avec les lignes après toutes les transformations
         imageView.post(new Runnable() {
