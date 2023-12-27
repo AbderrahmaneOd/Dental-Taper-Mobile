@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 String resultText = String.format(
                         "Taper gauche: %.2f degrés\n" +
                                 "Taper droite: %.2f degrés\n",
-                        (angle1Deg), (angle2Deg));
+                        (angle1Deg), (-angle2Deg));
                 anglesTextView.setText(resultText);
             }
         });
