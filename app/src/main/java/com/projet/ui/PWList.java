@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -36,11 +37,11 @@ public class PWList extends AppCompatActivity {
     private ListView PWList;
     RequestQueue requestQueue;
     PWAdapter PWAdapter ;
-    private Button backToHome;
+    private Button studentPWListBtn;
     private static final String TAG = "GetPWs";
 
    // private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/1500";
-    private String studentId;
+    private String studentId, pwId;
 
     private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/";
     //private final String PWS_URL = "http://192.168.43.91:8080/api/pws/student/";
@@ -52,19 +53,44 @@ public class PWList extends AppCompatActivity {
 
         Intent intent = getIntent();
         studentId = intent.getStringExtra("studentId");
-        
-        
-        PWAdapter = new PWAdapter(pwList, this);
-        backToHome = findViewById(R.id.backToHomeBtn);
 
-        backToHome.setOnClickListener(new View.OnClickListener() {
+        studentPWListBtn = findViewById(R.id.idstudentPWListBtn);
+        PWList = findViewById(R.id.idPWLV);
+        PWAdapter = new PWAdapter(pwList, this);
+
+        studentPWListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("StudentID", "Student ID : " + studentId);
+                Intent newIntent = new Intent(PWList.this, StudentPWList.class);
+                newIntent.putExtra("studentId", studentId);
+                startActivity(newIntent);
+            }
+        });
+
+        PWList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Gérez le clic sur l'élément à la position donnée ici
+                // Utilisez "position" pour obtenir l'élément sélectionné dans votre adaptateur
+                PW selectedPW = (PW) PWAdapter.getItem(position);
+
+                // Faites ce que vous voulez avec l'élément sélectionné
+                Intent intent = new Intent(PWList.this, MainActivity.class);
+                intent.putExtra("pwId", String.valueOf(selectedPW.getId()));
+                intent.putExtra("studentId", studentId);
+                startActivity(intent);
+            }
+        });
+
+        /*backToHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PWList.this, MainActivity.class);
                 startActivity(intent);
                 PWList.this.finish();
             }
-        });
+        });*/
 
         getPWs();
 
@@ -82,10 +108,8 @@ public class PWList extends AppCompatActivity {
                         // Traitement de la réponse JSON
                         List<PW> studentPWList = parseStudentPWList(response);
 
-                        PWList = findViewById(R.id.idPWLV);
                         PWAdapter.updateStudentsList(studentPWList);
                         PWList.setAdapter(PWAdapter);
-
                         for (PW studentPW : studentPWList) {
                             // Faire quelque chose avec chaque étudiant (par exemple, l'afficher dans Logcat)
                             Log.d(TAG, "PW ID: " + studentPW.getId() + " Title : " + studentPW.getTitle()

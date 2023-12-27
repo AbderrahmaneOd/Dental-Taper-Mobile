@@ -144,32 +144,7 @@
             android:orientation="horizontal"
             android:layout_below="@id/submitResultBtn">
 
-            <Button
-                android:id="@+id/PWListBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="16dp"
-                android:elevation="4dp"
-                android:onClick="choosePhoto"
-                android:text="TPs soumis"
-                android:textColor="#fff"
-                android:backgroundTint="#596FB7"
-                android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/AllPWBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="16dp"
-                android:elevation="4dp"
-                android:onClick="choosePhoto"
-                android:text="Tous les TPs"
-                android:textColor="#fff"
-                android:layout_marginLeft="12dp"
-                android:backgroundTint="#596FB7"
-                android:textSize="18sp" />
 
         </LinearLayout>
 

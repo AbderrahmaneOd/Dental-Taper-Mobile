@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.projet.entities.Student;
 import com.projet.entities.User;
+import com.projet.ui.PWList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                             //Log.d(TAG, "Student ID: " + student.getId() + ", Login: " + student.getUser().getLogin());
 
                             if(usernameEdt.getText().toString().equals(student.getUser().getLogin())){
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, PWList.class);
                                 intent.putExtra("studentId", student.getId()+"");
                                 Log.d(TAG, "Login successful " + student.getId());
                                 startActivity(intent);

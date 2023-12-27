@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
     // Stocke les points du contour
     private List<org.opencv.core.Point> contourPoints = new ArrayList<>();
     private Button studentPWListBtn;
-    private Button pwListBtn;
     private Button nextBtn, cameraBtn, resetBtn, submitResultsBtn;
     private TextView stepTxtView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
     private List<org.opencv.core.Point> selectedPoints = new ArrayList<>();
-    private String studentId;
+    private List<Double> allAngles = new ArrayList<>();
+    private String studentId, pwId;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -85,11 +85,10 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         studentId = intent.getStringExtra("studentId");
+        pwId = intent.getStringExtra("pwId");
 
         imageView = findViewById(R.id.imageView);
         anglesTextView = findViewById(R.id.anglesTextView);
-        studentPWListBtn = findViewById(R.id.PWListBtn);
-        pwListBtn = findViewById(R.id.AllPWBtn);
         submitResultsBtn = findViewById(R.id.submitResultBtn);
         nextBtn = findViewById(R.id.idNextBtn);
         resetBtn = findViewById(R.id.idResetBtn);
@@ -97,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         cameraBtn = findViewById(R.id.idCameraBtn);
 
 
+        /*
         studentPWListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
                 newIntent.putExtra("studentId", studentId);
                 startActivity(newIntent);
             }
-        });
+        });*/
 
-        pwListBtn.setOnClickListener(new View.OnClickListener() {
+
+
+        /*pwListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("StudentID", "Student ID : " + studentId);
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 newIntent.putExtra("studentId", studentId);
                 startActivity(newIntent);
             }
-        });
+        });*/
 
         submitResultsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,47 +138,56 @@ public class MainActivity extends AppCompatActivity {
 
     public void submitResults() {
 
-        // Créez un objet JSON avec les données requises
-        JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("date", "2023-12-23");
-            jsonBody.put("angleInterneG", 20707.42);
-            jsonBody.put("angleInterneD", 1226.31);
-            jsonBody.put("angleExterneG", 7870.25);
-            jsonBody.put("angleExterneD", 21809.42);
-            jsonBody.put("angledepouilleG", 6586.31);
-            jsonBody.put("angledepouilleD", 27597.99);
-            jsonBody.put("angleConvergence", 15267.08);
+        if(allAngles.size() == 6){
+            // Créez un objet JSON avec les données requises
+            JSONObject jsonBody = new JSONObject();
+            try {
+                jsonBody.put("date", "2023-12-23");
+                jsonBody.put("angleInterneG", allAngles.get(0));
+                jsonBody.put("angleInterneD", allAngles.get(1));
+                jsonBody.put("angleExterneG", allAngles.get(2));
+                jsonBody.put("angleExterneD", allAngles.get(3));
+                jsonBody.put("angledepouilleG", allAngles.get(4));
+                jsonBody.put("angledepouilleD", allAngles.get(5));
+                jsonBody.put("angleConvergence", 0);
 
-            JSONObject studentObj = new JSONObject();
-            studentObj.put("id", studentId);
-            jsonBody.put("student", studentObj);
+                JSONObject studentObj = new JSONObject();
+                studentObj.put("id", studentId);
+                jsonBody.put("student", studentObj);
 
-            JSONObject pwObj = new JSONObject();
-            pwObj.put("id", 1);
-            jsonBody.put("pw", pwObj);
-        } catch (JSONException e) {
-            e.printStackTrace();
+                JSONObject pwObj = new JSONObject();
+                pwObj.put("id", pwId);
+                jsonBody.put("pw", pwObj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, SUBMIT_URL, jsonBody,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            // Traitement de la réponse en cas de succès
+                            Log.d("VolleyResponse", response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // Traitement des erreurs
+                    Log.e("VolleyError", error.toString());
+                }
+            });
+
+            // Ajoutez la requête à la RequestQueue
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(jsonObjectRequest);
+
+            // Vider le tableau qui conteint touts les angles apres sauvgarede dans DB
+            allAngles.clear();
+        } else {
+            Log.d("SubmitCheck", "Veiller completer touts les angles");
         }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, SUBMIT_URL, jsonBody,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Traitement de la réponse en cas de succès
-                        Log.d("VolleyResponse", response.toString());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Traitement des erreurs
-                Log.e("VolleyError", error.toString());
-            }
-        });
 
-        // Ajoutez la requête à la RequestQueue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(jsonObjectRequest);
     }
 
     public void openCamera() {
@@ -221,6 +232,9 @@ public class MainActivity extends AppCompatActivity {
         double taperAngleRad2 = Math.atan(deltaY2 / deltaX);
         double taperAngleDeg2 = Math.toDegrees(taperAngleRad2);
 
+        // Save angles ro store it in DB
+        allAngles.add(Double.parseDouble(String.format("%.2f", (90 - taperAngleDeg))));
+        allAngles.add(Double.parseDouble(String.format("%.2f", (90 - taperAngleDeg2))));
 
         runOnUiThread(new Runnable() {
             @Override
@@ -248,6 +262,9 @@ public class MainActivity extends AppCompatActivity {
         double angle2Rad = Math.atan2(points.get(3).y - points.get(2).y, points.get(3).x - points.get(2).x);
         double angle2Deg = Math.toDegrees(angle2Rad);
 
+        // Save angles ro store it in DB
+        allAngles.add(Double.parseDouble(String.format("%.2f", angle1Deg)));
+        allAngles.add(Double.parseDouble(String.format("%.2f", (-angle2Deg))));
 
         runOnUiThread(new Runnable() {
             @Override

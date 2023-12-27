@@ -7,18 +7,32 @@
     android:padding="20dp"
     tools:context=".ui.PWList">
 
-    <Button
-        android:id="@+id/backToHomeBtn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="#11235A"
-        android:text="Back to home"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/idstudentPWListBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:text="TPs soumis"
+            android:textColor="#fff"
+            android:backgroundTint="#596FB7"
+            android:textSize="18sp" />
+
+
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/idPWLV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/backToHomeBtn"/>
+        android:layout_below="@id/linearLayout"/>
 
 </RelativeLayout>
