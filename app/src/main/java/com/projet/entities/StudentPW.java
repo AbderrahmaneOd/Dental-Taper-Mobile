@@ -3,8 +3,13 @@ package com.projet.entities;
 public class StudentPW {
 
     private int id;
-    private String mesureAngle1;
-    private String mesureAngle2;
+    private Double angleInterneG;
+    private Double angleInterneD;
+    private Double angleExterneG;
+    private Double angleExterneD;
+    private Double angledepouilleG;
+    private Double angledepouilleD;
+    private Double angleConvergence;
 
     private PW pw;
 
@@ -16,20 +21,60 @@ public class StudentPW {
         this.id = id;
     }
 
-    public String getMesureAngle1() {
-        return mesureAngle1;
+    public Double getAngleInterneG() {
+        return angleInterneG;
     }
 
-    public void setMesureAngle1(String mesureAngle1) {
-        this.mesureAngle1 = mesureAngle1;
+    public void setAngleInterneG(Double angleInterneG) {
+        this.angleInterneG = angleInterneG;
     }
 
-    public String getMesureAngle2() {
-        return mesureAngle2;
+    public Double getAngleInterneD() {
+        return angleInterneD;
     }
 
-    public void setMesureAngle2(String mesureAngle2) {
-        this.mesureAngle2 = mesureAngle2;
+    public void setAngleInterneD(Double angleInterneD) {
+        this.angleInterneD = angleInterneD;
+    }
+
+    public Double getAngleExterneG() {
+        return angleExterneG;
+    }
+
+    public void setAngleExterneG(Double angleExterneG) {
+        this.angleExterneG = angleExterneG;
+    }
+
+    public Double getAngleExterneD() {
+        return angleExterneD;
+    }
+
+    public void setAngleExterneD(Double angleExterneD) {
+        this.angleExterneD = angleExterneD;
+    }
+
+    public Double getAngledepouilleG() {
+        return angledepouilleG;
+    }
+
+    public void setAngledepouilleG(Double angledepouilleG) {
+        this.angledepouilleG = angledepouilleG;
+    }
+
+    public Double getAngledepouilleD() {
+        return angledepouilleD;
+    }
+
+    public void setAngledepouilleD(Double angledepouilleD) {
+        this.angledepouilleD = angledepouilleD;
+    }
+
+    public Double getAngleConvergence() {
+        return angleConvergence;
+    }
+
+    public void setAngleConvergence(Double angleConvergence) {
+        this.angleConvergence = angleConvergence;
     }
 
     public PW getPw() {

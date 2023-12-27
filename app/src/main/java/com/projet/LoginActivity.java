@@ -29,8 +29,8 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "GetStudents";
-    private static final String STUDENTS_URL = "http://192.168.43.91:8080/api/students";
-    //private static final String STUDENTS_URL = "http://192.168.11.191:8080/api/students";
+    //private static final String STUDENTS_URL = "http://192.168.43.91:8080/api/students";
+    private static final String STUDENTS_URL = "http://192.168.11.191:8080/api/students";
     //private static final  String TOEKN = "JSESSIONID=rB6PI83hHhY_cV6T4xxXJM15EadzeBtrzpHwyoWA; XSRF-TOKEN=230a3667-fe7a-4d32-b335-8db5e82b0119";
 
     private EditText usernameEdt;
@@ -102,8 +102,8 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject studentJson = jsonArray.getJSONObject(i);
                 Student student = new Student();
                 student.setId(studentJson.getInt("id"));
-                student.setNumber(studentJson.getString("number"));
-                student.setBirthDay(studentJson.getString("birthDay"));
+                //student.setNumber(studentJson.getString("number"));
+                //student.setBirthDay(studentJson.getString("birthDay"));
 
                 // Récupérer l'objet User
                 JSONObject userJson = studentJson.getJSONObject("user");

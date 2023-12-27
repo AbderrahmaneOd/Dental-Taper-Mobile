@@ -42,8 +42,8 @@ public class PWList extends AppCompatActivity {
    // private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/1500";
     private String studentId;
 
-    //private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/";
-    private final String PWS_URL = "http://192.168.43.91:8080/api/pws/student/";
+    private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/";
+    //private final String PWS_URL = "http://192.168.43.91:8080/api/pws/student/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

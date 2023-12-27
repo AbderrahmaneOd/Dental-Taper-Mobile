@@ -53,8 +53,8 @@ public class StudentPWAdapter extends BaseAdapter{
         TextView pw = view.findViewById(R.id.idPWTitleItem);
 
         id.setText(studentPWs.get(i).getId()+"");
-        mesure1.setText(studentPWs.get(i).getMesureAngle1());
-        mesure2.setText(studentPWs.get(i).getMesureAngle2());
+        mesure1.setText(studentPWs.get(i).getAngleInterneD()+"");
+        mesure2.setText(studentPWs.get(i).getAngleInterneG()+"");
         pw.setText(studentPWs.get(i).getPw().getTitle());
         return view;
     }

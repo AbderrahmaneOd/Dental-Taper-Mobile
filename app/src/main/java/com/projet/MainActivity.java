@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -35,6 +37,12 @@ import java.util.List;
 
 import android.view.MotionEvent;  // Add this import statement
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.projet.ui.PWList;
 import com.projet.ui.StudentPWList;
 
@@ -50,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final String SUBMIT_URL = "http://192.168.11.191:8080/api/student-pws";
     private ImageView imageView;
     private TextView anglesTextView;
 
@@ -61,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
     private List<org.opencv.core.Point> contourPoints = new ArrayList<>();
     private Button studentPWListBtn;
     private Button pwListBtn;
-    private Button submitResultsBtn;
-    private Button nextBtn, cameraBtn, resetBtn;
+    private Button nextBtn, cameraBtn, resetBtn, submitResultsBtn;
     private TextView stepTxtView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
     private List<org.opencv.core.Point> selectedPoints = new ArrayList<>();
+    private String studentId;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -75,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
-        String studentId = intent.getStringExtra("studentId");
+        studentId = intent.getStringExtra("studentId");
 
         imageView = findViewById(R.id.imageView);
         anglesTextView = findViewById(R.id.anglesTextView);
@@ -112,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         submitResultsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                return;
+                submitResults();
             }
         });
 
@@ -123,6 +132,51 @@ public class MainActivity extends AppCompatActivity {
                 requestCameraPermission();
             }
         });
+    }
+
+    public void submitResults() {
+
+        // Créez un objet JSON avec les données requises
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("date", "2023-12-23");
+            jsonBody.put("angleInterneG", 20707.42);
+            jsonBody.put("angleInterneD", 1226.31);
+            jsonBody.put("angleExterneG", 7870.25);
+            jsonBody.put("angleExterneD", 21809.42);
+            jsonBody.put("angledepouilleG", 6586.31);
+            jsonBody.put("angledepouilleD", 27597.99);
+            jsonBody.put("angleConvergence", 15267.08);
+
+            JSONObject studentObj = new JSONObject();
+            studentObj.put("id", studentId);
+            jsonBody.put("student", studentObj);
+
+            JSONObject pwObj = new JSONObject();
+            pwObj.put("id", 1);
+            jsonBody.put("pw", pwObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, SUBMIT_URL, jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Traitement de la réponse en cas de succès
+                        Log.d("VolleyResponse", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Traitement des erreurs
+                Log.e("VolleyError", error.toString());
+            }
+        });
+
+        // Ajoutez la requête à la RequestQueue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonObjectRequest);
     }
 
     public void openCamera() {

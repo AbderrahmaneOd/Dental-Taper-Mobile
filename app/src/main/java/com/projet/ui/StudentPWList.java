@@ -38,8 +38,8 @@ public class StudentPWList extends AppCompatActivity {
     private static final String TAG = "GetStudents";
 
     //private final String STUDENTS_URL = "http://192.168.11.191:8080/api/student-pws/student/1";
-    //private final String STUDENTS_URL = "http://192.168.11.191:8080/api/student-pws/student/";
-    private final String STUDENTS_URL = "http://192.168.43.91:8080/api/student-pws/student/";
+    private final String STUDENTS_URL = "http://192.168.11.191:8080/api/student-pws/student/";
+    //private final String STUDENTS_URL = "http://192.168.43.91:8080/api/student-pws/student/";
     private String studentId;
 
     @Override
@@ -108,8 +108,8 @@ public class StudentPWList extends AppCompatActivity {
                 JSONObject studentJson = jsonArray.getJSONObject(i);
                 StudentPW studentPW = new StudentPW();
                 studentPW.setId(studentJson.getInt("id"));
-                studentPW.setMesureAngle1(studentJson.getString("mesureAngle1"));
-                studentPW.setMesureAngle2(studentJson.getString("mesureAngle2"));
+                studentPW.setAngleInterneG(studentJson.getDouble("angleInterneG"));
+                studentPW.setAngleInterneD(studentJson.getDouble("angleInterneD"));
 
                 // Récupérer l'objet PW
                 JSONObject pwJson = studentJson.getJSONObject("pw");
