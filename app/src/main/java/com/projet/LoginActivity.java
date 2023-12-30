@@ -8,12 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.projet.entities.Student;
 import com.projet.entities.User;
@@ -31,10 +34,11 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "GetStudents";
     //private static final String STUDENTS_URL = "http://192.168.43.91:8080/api/students";
-    private static final String STUDENTS_URL = "http://192.168.11.191:8080/api/students";
+    private static final String SUBMIT_URL = "http://192.168.1.104:8080/api/authentication";
+    private static final String STUDENTS_URL = "http://192.168.1.104:8080/api/students";
     //private static final  String TOEKN = "JSESSIONID=rB6PI83hHhY_cV6T4xxXJM15EadzeBtrzpHwyoWA; XSRF-TOKEN=230a3667-fe7a-4d32-b335-8db5e82b0119";
 
-    private EditText usernameEdt;
+    private EditText usernameEdt, passwordEdt;
     private Button loginBtn;
 
     @Override
@@ -46,7 +50,8 @@ public class LoginActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_login);
 
-        usernameEdt = findViewById(R.id.usernameEdt);
+        usernameEdt = findViewById(R.id.idUsernameEdt);
+        passwordEdt = findViewById(R.id.idPasswordEdt);
         loginBtn = findViewById(R.id.loginBtn);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -54,10 +59,52 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 //startActivity(intent);
-                getStudents();
+                //getStudents();
+                authenticate();
             }
         });
 
+    }
+
+    public void authenticate(){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, SUBMIT_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Traitement de la réponse en cas de succès
+                        Log.d(TAG, "Login successful " + response.toString());
+                        getStudents();
+                        Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Traitement des erreurs
+                Log.e("VolleyError", error.toString());
+                Toast.makeText(getApplicationContext(), "Username ou mot de passe est incorrect", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Paramètres form-data
+                Map<String, String> params = new HashMap<>();
+                params.put("username", usernameEdt.getText().toString());
+                params.put("password", passwordEdt.getText().toString());
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                // Définir les en-têtes pour form-data
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                return headers;
+            }
+        };
+
+        // Ajouter la requête à la file d'attente
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
     public void getStudents() {
@@ -109,19 +156,8 @@ public class LoginActivity extends AppCompatActivity {
                 // Récupérer l'objet User
                 JSONObject userJson = studentJson.getJSONObject("user");
                 User user = new User();
-                user.setCreatedBy(userJson.getString("createdBy"));
-                user.setCreatedDate(userJson.getString("createdDate"));
-                user.setLastModifiedBy(userJson.getString("lastModifiedBy"));
-                user.setLastModifiedDate(userJson.getString("lastModifiedDate"));
-                user.setId(userJson.getInt("id"));
                 user.setLogin(userJson.getString("login"));
-                user.setFirstName(userJson.getString("firstName"));
-                user.setLastName(userJson.getString("lastName"));
-                user.setEmail(userJson.getString("email"));
-                user.setActivated(userJson.getBoolean("activated"));
-                user.setLangKey(userJson.getString("langKey"));
-                user.setImageUrl(userJson.getString("imageUrl"));
-                user.setResetDate(userJson.getString("resetDate"));
+
 
                 student.setUser(user);
 

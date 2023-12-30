@@ -43,4 +43,5 @@ dependencies {
     implementation ("com.quickbirdstudios:opencv-contrib:3.4.15")
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.8.9")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

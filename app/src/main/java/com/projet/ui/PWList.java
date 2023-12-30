@@ -37,13 +37,13 @@ public class PWList extends AppCompatActivity {
     private ListView PWList;
     RequestQueue requestQueue;
     PWAdapter PWAdapter ;
-    private Button studentPWListBtn;
+    private Button studentPWListBtn, mesNotesBtn;
     private static final String TAG = "GetPWs";
 
    // private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/1500";
     private String studentId, pwId;
 
-    private final String PWS_URL = "http://192.168.11.191:8080/api/pws/student/";
+    private final String PWS_URL = "http://192.168.1.104:8080/api/pws/student/";
     //private final String PWS_URL = "http://192.168.43.91:8080/api/pws/student/";
 
     @Override
@@ -54,7 +54,8 @@ public class PWList extends AppCompatActivity {
         Intent intent = getIntent();
         studentId = intent.getStringExtra("studentId");
 
-        studentPWListBtn = findViewById(R.id.idstudentPWListBtn);
+        studentPWListBtn = findViewById(R.id.idStudentPWListBtn);
+        mesNotesBtn = findViewById(R.id.idStatisticBtn);
         PWList = findViewById(R.id.idPWLV);
         PWAdapter = new PWAdapter(pwList, this);
 
@@ -63,6 +64,16 @@ public class PWList extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("StudentID", "Student ID : " + studentId);
                 Intent newIntent = new Intent(PWList.this, StudentPWList.class);
+                newIntent.putExtra("studentId", studentId);
+                startActivity(newIntent);
+            }
+        });
+
+        mesNotesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("StudentID", "Student ID : " + studentId);
+                Intent newIntent = new Intent(PWList.this, Statistics.class);
                 newIntent.putExtra("studentId", studentId);
                 startActivity(newIntent);
             }

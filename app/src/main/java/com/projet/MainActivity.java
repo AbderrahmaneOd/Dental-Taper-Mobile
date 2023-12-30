@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
-    private static final String SUBMIT_URL = "http://192.168.11.191:8080/api/student-pws";
+    private static final String SUBMIT_URL = "http://192.168.1.104:8080/api/student-pws";
     private ImageView imageView;
     private TextView anglesTextView;
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 jsonBody.put("angleExterneD", allAngles.get(3));
                 jsonBody.put("angledepouilleG", allAngles.get(4));
                 jsonBody.put("angledepouilleD", allAngles.get(5));
-                jsonBody.put("angleConvergence", 0);
+                jsonBody.put("angleConvergence", allAngles.get(4) + allAngles.get(5));
 
                 JSONObject studentObj = new JSONObject();
                 studentObj.put("id", studentId);
@@ -183,8 +183,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Vider le tableau qui conteint touts les angles apres sauvgarede dans DB
             allAngles.clear();
+            Toast.makeText(getApplicationContext(), "Les angles sont soumis avec succès", Toast.LENGTH_SHORT).show();
         } else {
-            Log.d("SubmitCheck", "Veiller completer touts les angles");
+            Log.d("SubmitCheck", "Veuillez compléter tous les angles");
+            Toast.makeText(getApplicationContext(), "Veuillez compléter tous les angles", Toast.LENGTH_SHORT).show();
         }
 
 

@@ -10,6 +10,7 @@ public class StudentPW {
     private Double angledepouilleG;
     private Double angledepouilleD;
     private Double angleConvergence;
+    private Double note;
 
     private PW pw;
 
@@ -83,5 +84,13 @@ public class StudentPW {
 
     public void setPw(PW pw) {
         this.pw = pw;
+    }
+
+    public Double getNote() {
+        return note;
+    }
+
+    public void setNote(Double note) {
+        this.note = note;
     }
 }

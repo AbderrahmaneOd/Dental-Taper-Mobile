@@ -34,12 +34,11 @@ public class StudentPWList extends AppCompatActivity {
     private ListView StudentPWList;
     RequestQueue requestQueue;
     StudentPWAdapter studentPWAdapter ;
-    private Button backToHome;
     private static final String TAG = "GetStudents";
 
     //private final String STUDENTS_URL = "http://192.168.11.191:8080/api/student-pws/student/1";
-    private final String STUDENTS_URL = "http://192.168.11.191:8080/api/student-pws/student/";
-    //private final String STUDENTS_URL = "http://192.168.43.91:8080/api/student-pws/student/";
+    //private final String STUDENTS_URL = "http://192.168.1.104:8080/api/student-pws/student/1";
+    private final String STUDENTS_URL = "http://192.168.1.104:8080/api/student-pws/student/";
     private String studentId;
 
     @Override
@@ -51,16 +50,15 @@ public class StudentPWList extends AppCompatActivity {
         studentId = intent.getStringExtra("studentId");
 
         studentPWAdapter = new StudentPWAdapter(employes, this);
-        backToHome = findViewById(R.id.backToHomeBtn);
 
-        backToHome.setOnClickListener(new View.OnClickListener() {
+        /*backToHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StudentPWList.this, MainActivity.class);
                 startActivity(intent);
                 StudentPWList.this.finish();
             }
-        });
+        });*/
 
         getStudentPW();
 

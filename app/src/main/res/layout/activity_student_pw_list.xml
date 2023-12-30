@@ -7,18 +7,10 @@
     android:padding="10dp"
     tools:context=".ui.StudentPWList">
 
-    <Button
-        android:id="@+id/backToHomeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="#11235A"
-        android:text="Back to home"/>
 
     <ListView
         android:id="@+id/idStudentPWLV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/backToHomeBtn"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
